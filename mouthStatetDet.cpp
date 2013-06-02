@@ -1,4 +1,5 @@
 #include "mouthStateDet.h"
+#include <QDebug>
 
 using namespace std;
 using namespace cv;
@@ -81,7 +82,7 @@ int detectFace(const Mat& frame, Rect *faceRect,CascadeClassifier *faceCC){
     return faceRects.size();
 }
 
-int detectMouth(const Mat& frame, Rect faceArea,Rect *mouthRect,CascadeClassifier *mouthCC, cv::Rect *mouthInFaceRect){
+int detectMouth2(const Mat& frame, Rect faceArea,Rect *mouthRect,CascadeClassifier *mouthCC, cv::Rect *mouthInFaceRect){
 
     if(mouthRect==NULL || mouthCC == NULL) {return -1;}
     vector<Rect> mouthRects;
@@ -326,3 +327,56 @@ MouthState detectMouthState(Mat mouth, Mat patternUp, Mat patternDown,
 
     return mouthState;
 }
+
+void detectMouth(const Mat mouth, Mat *dest){
+
+    //zrodlo algorytmu:
+    //"LIP DETECTION BASED-ON NORMALIZED RGB CHROMATICITY DIAGRAM"
+    //Aryuanto Soetedjo, Koichi Yamada, F. Yudi Limpraptono
+
+    if(mouth.channels()!=3){return;}
+
+    Mat R(mouth.rows, mouth.cols,CV_8UC1);
+    Mat G(mouth.rows, mouth.cols,CV_8UC1);
+    Mat B(mouth.rows, mouth.cols,CV_8UC1);
+
+    //Wyciagniecie osobnych kanalow z obrazu BGR
+    Mat bgr[] = {B,G,R};
+    split(mouth,bgr);
+    //-----------------------------------------
+
+    double r[mouth.rows][mouth.cols];
+    double g[mouth.rows][mouth.cols];
+    Mat igr(mouth.rows,mouth.cols,CV_32FC1);
+
+    //Obliczenie chrominancji RG oraz wyrazenia Igr ze zrodla.
+    for(int row = 0; row < mouth.rows; row++){
+        for(int col = 0; col < mouth.cols; col++){
+
+            int RGB = R.at<unsigned char>(row,col) +
+                        G.at<unsigned char>(row,col) +
+                           B.at<unsigned char>(row,col);
+            //chrominancja RG
+            r[row][col] = (double)R.at<unsigned char>(row,col)/(double)RGB;
+            g[row][col] = (double)G.at<unsigned char>(row,col)/(double)RGB;
+
+            //wyrazenie Igr
+            double temp = ((100 + (100*g[row][col]) - (100*r[row][col]))/200);
+            igr.at<float>(row,col) = (float)temp;
+
+        }
+    }
+    //------------------------------------------------------
+
+    normalize(igr,igr,0,255,NORM_MINMAX,CV_8UC1); //normalizacja
+
+    threshold(igr,igr,0,255,CV_THRESH_OTSU); //binaryzacja alg. Otsu
+    igr = 255 - igr; //odwrocenie barw
+
+    //tu powinno byc jeszcze porownanie r-g<TR, jak w zrodle
+    //ale z niewiadomych przyczyn zawsze jest prawdziwe wiec zostalo
+    //pominiete i zastosowano sama binaryzacje
+
+    *dest = igr.clone();
+}
+

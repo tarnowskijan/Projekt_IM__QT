@@ -61,7 +61,7 @@ int detectFace(const cv::Mat& frame, cv::Rect *faceRect, cv::CascadeClassifier *
  * @param mouthInFaceRect
  * @return
  */
-int detectMouth(const cv::Mat& frame, cv::Rect faceArea, cv::Rect *mouthRect,cv::CascadeClassifier *mouthCC, cv::Rect *mouthInFaceRect = NULL);
+int detectMouth2(const cv::Mat& frame, cv::Rect faceArea, cv::Rect *mouthRect,cv::CascadeClassifier *mouthCC, cv::Rect *mouthInFaceRect = NULL);
 
 /**
  * @brief Rysuje na podanej ramce prostokaty.
@@ -72,7 +72,8 @@ int detectMouth(const cv::Mat& frame, cv::Rect faceArea, cv::Rect *mouthRect,cv:
 void drawRect(cv::Mat &frame,cv::Rect rect, RectColor color);
 
 /**
- * @brief Usuwa obiekty mniejsze niz podany rozmiar.
+ * @brief Usuwa obiekty mniejsze niz podany rozmiar. Przy okazji
+ *          wypelnia dziury w obiektach ktore zostawia.
  * @param binImage Obraz w formacie binarnym.
  * @param size Minimalny rozmiar obiektu (ilosc pikseli).
  */
@@ -118,6 +119,15 @@ void calcMouthArea(cv::Rect *mouthRect, cv::Rect faceRect);
  * @param rects Wektor cv::Rect.
  * @return cv::Rect o najwiekszej powierzchni.
  */
-int getBiggestRect(const vector<cv::Rect> rects);
+int getBiggestRect(const std::vector<cv::Rect> rects);
+
+/**
+ * @brief Wyodrebnia z podanego obszaru usta, za pomocą chrominancji RG.
+ *          Algorytm czesciowo wziety z "LIP DETECTION BASED-ON NORMALIZED RGB CHROMATICITY DIAGRAM",
+ *          autorzy: Aryuanto Soetedjo, Koichi Yamada, F. Yudi Limpraptono.
+ * @param mouth Kolorowy obraz BGR zawierający usta.
+ * @param dest Macierz do zapisania obrazu binarnego z ustami.
+ */
+void detectMouth(const cv::Mat mouth, cv::Mat *dest);
 
 #endif // MOUTHSTATEDET_H_INCLUDED

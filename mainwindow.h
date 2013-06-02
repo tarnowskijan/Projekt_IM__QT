@@ -16,7 +16,6 @@
 #include "configwindow.h"
 
 #define FRAME_INTERVAL 30
-#define MOUSE_MOVE 5
 
 using namespace cv;
 
@@ -59,20 +58,14 @@ private:
     Rect mouthInFaceRect;
     //------------------------------------
 
-    //wartosci HSV dla ust, dobrane empirycznie
-    int hueMin;
-    int hueMax;
-    int satMin; //zalezne od oswietlenia sceny
-    int satMax;
-    int valMin;
-    int valMax;
-    //----------------------------------------
+    bool sharpen;   //czy wyostrzac obraz
     int minObjectSize; //minimalny rozmiar obiektu
     double maxPercDiff; //maksymalna roznica miedzy wzorcem gestu a aktualnym obrazem
                         //zeby zostal uznany za poprawnie sklasyfikowany
     int dblClickDelay; //ilosc sek. jaka trzeba utrzymywac gest klikniecia aby
                         //zostal uznany za podwojne klikniecie
     int steeringEnabled; //wlaczone sterowanie myszka
+    int mouseSpeed;
 
     /**
      * @brief Konwertuje typ cv::Mat do typu QImage
@@ -96,16 +89,11 @@ public slots:
      */
     void updateImages();
 
-    void setHueMin(int value);
-    void setHueMax(int value);
-    void setSatMin(int value);
-    void setSatMax(int value);
-    void setValMin(int value);
-    void setValMax(int value);
-
     void setMinObjectSize(int value);
     void setMaxPercDiff(int value);
     void setDblClickDelay(int value);
+    void setSharpen(bool value);
+    void setMouseSpeed(int val);
 
     void saveUpPattern();
     void saveDownPattern();

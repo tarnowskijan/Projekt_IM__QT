@@ -18,15 +18,12 @@ MainWindow::MainWindow(QWidget *parent) :
     //podpiecie okna konfiguracji
     cfgWindow = new ConfigWindow(0);
     connect(ui->confWindowButton,SIGNAL(pressed()),cfgWindow,SLOT(show()));
-    connect(cfgWindow,SIGNAL(minHueChanged(int)),this,SLOT(setHueMin(int)));
-    connect(cfgWindow,SIGNAL(maxHueChanged(int)),this,SLOT(setHueMax(int)));
-    connect(cfgWindow,SIGNAL(minValChanged(int)),this,SLOT(setValMin(int)));
-    connect(cfgWindow,SIGNAL(maxValChanged(int)),this,SLOT(setValMax(int)));
-    connect(cfgWindow,SIGNAL(minSatChanged(int)),this,SLOT(setSatMin(int)));
-    connect(cfgWindow,SIGNAL(maxSatChanged(int)),this,SLOT(setSatMax(int)));
+
     connect(cfgWindow,SIGNAL(minObjSizeChanged(int)),this,SLOT(setMinObjectSize(int)));
     connect(cfgWindow,SIGNAL(dblClickDelayChanged(int)),this,SLOT(setDblClickDelay(int)));
     connect(cfgWindow,SIGNAL(maxPercDiffChanged(int)),this,SLOT(setMaxPercDiff(int)));
+    connect(cfgWindow,SIGNAL(sharpenCheckboxClicked(bool)),this,SLOT(setSharpen(bool)));
+    connect(cfgWindow,SIGNAL(mouseSpeedValueChanged(int)),this,SLOT(setMouseSpeed(int)));
 
     connect(cfgWindow,SIGNAL(upPatternSaved()),this,SLOT(saveUpPattern()));
     connect(cfgWindow,SIGNAL(downPatternSaved()),this,SLOT(saveDownPattern()));
@@ -36,16 +33,12 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(cfgWindow,SIGNAL(neutralPatternSaved()),this,SLOT(saveNeutralPattern()));
     //-----------------------------------------------
     //inicjalizacja parametrow przetwarzania
-    hueMin=145;
-    hueMax=180;
-    satMin=80;
-    satMax=255;
-    valMin=75;
-    valMax=255;
     minObjectSize=150;
     maxPercDiff = 0.15;
     dblClickDelay = 3;
     steeringEnabled = false;
+    sharpen = true;
+    mouseSpeed = 5;
     //-----------------------------------------------
 
     //uruchomienie kamery i wczytanie kaskady haar'a
@@ -91,9 +84,11 @@ void MainWindow::updateImages(){
         //---------------------------------------------------------
 
         //wyostrzanie
-        Mat tmp;
-        GaussianBlur(frame, tmp, cv::Size(0, 0), 3);
-        addWeighted(frame, 1.5,tmp , -0.5, 0, frame);
+        if(sharpen){
+            Mat tmp;
+            GaussianBlur(frame, tmp, cv::Size(0, 0), 3);
+            addWeighted(frame, 1.5,tmp , -0.5, 0, frame);
+         }
         //---
 
         int facesCount = detectFace(frame, &faceRect, faceCC);
@@ -105,21 +100,14 @@ void MainWindow::updateImages(){
             Mat mouth;
             mouth = frame(mouthRect).clone(); //wyciecie kawalka z ustami
 
-            Mat mouthHSV;
-            cvtColor(mouth, mouthHSV, CV_BGR2HSV); //przeksztalcenie do HSV
-
-            //wykrycie ust po barwie w HSV
-            Mat hueInRange;
-            inRange(mouthHSV,Scalar(hueMin,satMin,valMin),Scalar(hueMax,satMax,valMax),hueInRange);
-
-            //zalewanie otworow
-            //Mat kernel = getStructuringElement(MORPH_ELLIPSE,Size( 15,15 ));
-            //morphologyEx(hueInRange,hueInRange,MORPH_CLOSE,kernel); //czemu to nie daje efektu??
-
             //wyciecie malych obiektow ktore nie naleza do ust
-            removeSmallObjects(&hueInRange,minObjectSize);
+            Mat processedMouth;
+            //wykrycie ust na podanym kawalku twarzy
+            detectMouth(mouth,&processedMouth);
+            //usuniecie szumow z obrazu i wypelnienie ust
+            removeSmallObjects(&processedMouth,minObjectSize);
 
-            finalMouth = hueInRange.clone();
+            finalMouth = processedMouth;
 
             QImage mouthImage = convertMatToQImage(finalMouth.clone());
             QImage scaledMouth = mouthImage.scaled( mouthImage.width()*4,
@@ -135,10 +123,10 @@ void MainWindow::updateImages(){
                                                         patternLEFT,patternCLICK,
                                                         patternNEUTRAL,maxPercDiff);
                 QPoint cursorPos = QCursor::pos();
-                if(mouthState == MOUTH_LEFT){cursorPos.setX( cursorPos.x() - MOUSE_MOVE );}
-                else if(mouthState == MOUTH_RIGHT){cursorPos.setX( cursorPos.x() + MOUSE_MOVE );}
-                else if(mouthState == MOUTH_UP){cursorPos.setY( cursorPos.y() - MOUSE_MOVE );}
-                else if(mouthState == MOUTH_DOWN){cursorPos.setY( cursorPos.y() + MOUSE_MOVE );}
+                if(mouthState == MOUTH_LEFT){cursorPos.setX( cursorPos.x() - mouseSpeed );}
+                else if(mouthState == MOUTH_RIGHT){cursorPos.setX( cursorPos.x() + mouseSpeed );}
+                else if(mouthState == MOUTH_UP){cursorPos.setY( cursorPos.y() - mouseSpeed );}
+                else if(mouthState == MOUTH_DOWN){cursorPos.setY( cursorPos.y() + mouseSpeed );}
                 QCursor::setPos(cursorPos);
 
                 QString state = (mouthState==MOUTH_UNDEFINED) ? "MOUTH_UNDEFINED" : "";
@@ -199,30 +187,6 @@ QImage MainWindow::convertMatToQImage(const Mat& mat)
     }
 }
 
-void MainWindow::setHueMin(int value){
-    hueMin = value;
-}
-
-void MainWindow::setHueMax(int value){
-    hueMax = value;
-}
-
-void MainWindow::setSatMin(int value){
-    satMin = value;
-}
-
-void MainWindow::setSatMax(int value){
-    satMax = value;
-}
-
-void MainWindow::setValMin(int value){
-    valMin = value;
-}
-
-void MainWindow::setValMax(int value){
-    valMax = value;
-}
-
 void MainWindow::setMinObjectSize(int value){
     minObjectSize = value;
 }
@@ -233,6 +197,14 @@ void MainWindow::setMaxPercDiff(int value){
 
 void MainWindow::setDblClickDelay(int value){
     dblClickDelay = value;
+}
+
+void MainWindow::setSharpen(bool value){
+    sharpen = value;
+}
+
+void MainWindow::setMouseSpeed(int val){
+    this->mouseSpeed = val;
 }
 
 void MainWindow::saveUpPattern(){

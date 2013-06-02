@@ -21,13 +21,7 @@ public:
     explicit ConfigWindow(QWidget *parent = 0);
     ~ConfigWindow();
 
-signals:
-    void minHueChanged(int val);
-    void maxHueChanged(int val);
-    void minSatChanged(int val);
-    void maxSatChanged(int val);
-    void minValChanged(int val);
-    void maxValChanged(int val);
+signals:    
     void minObjSizeChanged(int val);
     void maxPercDiffChanged(int val);
     void dblClickDelayChanged(int val);
@@ -37,17 +31,16 @@ signals:
     void rightPatternSaved();
     void clickPatternSaved();
     void neutralPatternSaved();
+    void sharpenCheckboxClicked(bool checked);
+    void mouseSpeedValueChanged(int val);
 
 public slots:
-    void emitMinHueChanged(int val);
-    void emitMaxHueChanged(int val);
-    void emitMinSatChanged(int val);
-    void emitMaxSatChanged(int val);
-    void emitMinValChanged(int val);
-    void emitMaxValChanged(int val);
+
+    void emitSharpenCheckboxClicked(bool checked);
     void emitMinObjSizeChanged(int val);
     void emitMaxPercDiffChanged(int val);
     void emitDblClickDelayChanged(int val);
+    void emitMouseSpeedValueChanged(int value);
 
     void emitUpPatternSaved(){emit upPatternSaved();}
     void emitDownPatternSaved(){emit downPatternSaved();}
