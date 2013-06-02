@@ -45,6 +45,9 @@ MainWindow::MainWindow(QWidget *parent) :
     sharpen = true;
     mouseSpeed = 5;
     colorSpaceBGR = true;
+    dblClick = false;
+    allGestures = 0;
+    otherGestures = 0;
     //-----------------------------------------------
 
     //uruchomienie kamery i wczytanie kaskady haar'a
@@ -56,9 +59,8 @@ MainWindow::MainWindow(QWidget *parent) :
         videoCapture = new VideoCapture(-1); //otwiera pierwsza wolna kamere
     }
 
-
     QString cascadePath = qApp->applicationDirPath() +
-                            "/haarcascade_frontalface_alt2.xml";
+                            "/haarcascade_frontalface.xml";
     faceCC = new CascadeClassifier(cascadePath.toStdString());
 
     if(videoCapture->isOpened()){
@@ -76,6 +78,7 @@ MainWindow::MainWindow(QWidget *parent) :
     }
 
     if(faceCC->empty()){
+        ui->mouthView->setText("Nie znaleziono pliku z kaskadą Haar'a!\nPowinien mieć nazwę: haarcascade_frontalface.xml");
         qDebug() << "Error: Could not load one of cascade classifiers.";
     }
     //-----------------------------------------------------
@@ -143,21 +146,51 @@ void MainWindow::updateImages(){
                                                         patternLEFT,patternCLICK,
                                                         patternNEUTRAL,maxPercDiff);
                 QPoint cursorPos = QCursor::pos();
-                if(mouthState == MOUTH_LEFT){cursorPos.setX( cursorPos.x() - mouseSpeed );}
-                else if(mouthState == MOUTH_RIGHT){cursorPos.setX( cursorPos.x() + mouseSpeed );}
-                else if(mouthState == MOUTH_UP){cursorPos.setY( cursorPos.y() - mouseSpeed );}
-                else if(mouthState == MOUTH_DOWN){cursorPos.setY( cursorPos.y() + mouseSpeed );}
-                else if(mouthState == MOUTH_CLICK){leftClick();}
+
+                if(dblClick){allGestures++;}
+
+                if(mouthState == MOUTH_LEFT){
+                    cursorPos.setX( cursorPos.x() - mouseSpeed );
+                    if(dblClick){otherGestures++;}
+                }
+                else if(mouthState == MOUTH_RIGHT){
+                    cursorPos.setX( cursorPos.x() + mouseSpeed );
+                    if(dblClick){otherGestures++;}
+                }
+                else if(mouthState == MOUTH_UP){
+                    cursorPos.setY( cursorPos.y() - mouseSpeed );
+                    if(dblClick){otherGestures++;}
+                }
+                else if(mouthState == MOUTH_DOWN){
+                    cursorPos.setY( cursorPos.y() + mouseSpeed );
+                    if(dblClick){otherGestures++;}
+                }
+                else if(mouthState == MOUTH_CLICK){
+
+                    if(!dblClick){
+                        leftClick();
+                        dblClick = true;
+                        QTimer::singleShot(dblClickDelay*1000, this,SLOT(checkDblClick()));
+                    }
+                    else{
+                        allGestures++;
+                    }
+
+                }
+                else{
+                    if(dblClick){otherGestures++;}
+                }
+
                 QCursor::setPos(cursorPos);
 
-                QString state = (mouthState==MOUTH_UNDEFINED) ? "MOUTH_UNDEFINED" : "";
+                /*QString state = (mouthState==MOUTH_UNDEFINED) ? "MOUTH_UNDEFINED" : "";
                 state = (mouthState==MOUTH_LEFT) ? "MOUTH_LEFT" : state;
                 state = (mouthState==MOUTH_RIGHT) ? "MOUTH_RIGHT" : state;
                 state = (mouthState==MOUTH_UP) ? "MOUTH_UP" : state;
                 state = (mouthState==MOUTH_DOWN) ? "MOUTH_DOWN" : state;
                 state = (mouthState==MOUTH_CLICK) ? "MOUTH_CLICK" : state;
                 state = (mouthState==MOUTH_NEUTRAL) ? "MOUTH_NEUTRAL" : state;
-                qDebug() << state;
+                qDebug() << state;*/
             }
             //-------------------------------
 
@@ -288,7 +321,7 @@ void MainWindow::leftClick()
     INPUT    Input={0};													// Create our input.
 
     Input.type        = INPUT_MOUSE;									// Let input know we are using the mouse.
-    Input.mi.dwFlags  = MOUSEEVENTF_LEFTDOWN;							// We are setting left mouse button down.
+    Input.mi.dwFlags  = MOUSEEVENTF_LEFTDOWN; 							// We are setting left mouse button down.
     SendInput( 1, &Input, sizeof(INPUT) );								// Send the input.
 
     ZeroMemory(&Input,sizeof(INPUT));									// Fills a block of memory with zeros.
@@ -354,6 +387,19 @@ void MainWindow::loadPatterns(){
     else{
         QMessageBox::warning(this,"Nie wczytano gestów","Nie odnaleziono wszystkich gestów.");
     }
+}
+
+void MainWindow::checkDblClick(){
+    float ratio = (float)otherGestures / (float)allGestures;
+
+    if(ratio < 0.15){
+        doubleLeftClick();
+        //qDebug() << ">>DOUBLE CLICK<<";
+    }
+
+    otherGestures = 0;
+    allGestures = 0;
+    dblClick = false;
 }
 
 MainWindow::~MainWindow()

@@ -69,7 +69,11 @@ private:
     int dblClickDelay; //ilosc sek. jaka trzeba utrzymywac gest klikniecia aby
                         //zostal uznany za podwojne klikniecie
     int steeringEnabled; //wlaczone sterowanie myszka
-    int mouseSpeed;
+    int mouseSpeed; //ilosc pikseli o jakie przemieszcza sie kursor
+
+    bool dblClick;  //czy jest oczekiwane podwojne klikniecie
+    int otherGestures; //ile innych gestow niz CLICK zostalo znalezionych
+    int allGestures; //wszystkich gestow sprawdzanych podczas oczekiwania na dblClick
 
     /**
      * @brief Konwertuje typ cv::Mat do typu QImage
@@ -90,6 +94,8 @@ private:
      */
     void leftClick();
 
+    void doubleLeftClick(){ leftClick(); leftClick();}
+
 private slots:
     /**
      * @brief Zapisuje zaprogramowane gesty. Aby zapisac wszystkie
@@ -101,6 +107,8 @@ private slots:
      *          musi byc dostepne w katalogu programu w folderze "patterns".
      */
     void loadPatterns();
+
+    void checkDblClick();
 
 public slots:
     /**

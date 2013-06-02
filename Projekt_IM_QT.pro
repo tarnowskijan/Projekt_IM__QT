@@ -24,8 +24,7 @@ HEADERS  += mainwindow.h \
 FORMS    += mainwindow.ui \
     configwindow.ui
 
-RESOURCES += \
-    resources.qrc
+RESOURCES +=
 
 INCLUDEPATH += \
     C:\Users\joHn_ny\opencv\opencv\build\include
