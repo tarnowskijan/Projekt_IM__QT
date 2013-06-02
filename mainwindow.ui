@@ -51,7 +51,7 @@
      <rect>
       <x>0</x>
       <y>540</y>
-      <width>621</width>
+      <width>741</width>
       <height>71</height>
      </rect>
     </property>
@@ -92,6 +92,32 @@
        </property>
        <property name="text">
         <string>Konfiguracja</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QPushButton" name="loadPatternsButton">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Minimum" vsizetype="Expanding">
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
+       <property name="text">
+        <string>Wczytaj gesty</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QPushButton" name="savePatternsButton">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Minimum" vsizetype="Expanding">
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
+       <property name="text">
+        <string>Zapisz gesty</string>
        </property>
       </widget>
      </item>

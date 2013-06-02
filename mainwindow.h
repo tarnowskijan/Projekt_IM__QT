@@ -8,6 +8,9 @@
 #include <QDebug>
 #include <QCursor>
 #include <QPoint>
+#include <QFile>
+#include <QMessageBox>
+#include <windows.h>
 #include "opencv2/highgui/highgui.hpp"
 #include "opencv2/features2d/features2d.hpp"
 #include "opencv2/nonfree/nonfree.hpp"
@@ -41,6 +44,7 @@ private:
 
     VideoCapture *videoCapture; //obiekt przechwytujacy wideo
     CascadeClassifier *faceCC; //obiekt poszukujacy twarzy za pomoca kaskad Haar'a
+    QString patternPath;
 
     //zmienne przechowujace zapisane gesty
     Mat patternDOWN;
@@ -57,7 +61,7 @@ private:
     Rect mouthRect;
     Rect mouthInFaceRect;
     //------------------------------------
-
+    bool colorSpaceBGR; //true - kolory BGR, false - kolory RGB
     bool sharpen;   //czy wyostrzac obraz
     int minObjectSize; //minimalny rozmiar obiektu
     double maxPercDiff; //maksymalna roznica miedzy wzorcem gestu a aktualnym obrazem
@@ -80,6 +84,23 @@ private:
      * @param windowTitle Tytul okna.
      */
     void showPatternPreview(Mat img, QString windowTitle);
+
+    /**
+     * @brief Wywoluje klikniecie lewym przyciskiem. Korzysta z WinAPI.
+     */
+    void leftClick();
+
+private slots:
+    /**
+     * @brief Zapisuje zaprogramowane gesty. Aby zapisac wszystkie
+     *          gesty musza byc wprowadzone.
+     */
+    void savePatterns();
+    /**
+     * @brief Wczytuje gesty. Aby wczytac, wszystkie 6 gestow
+     *          musi byc dostepne w katalogu programu w folderze "patterns".
+     */
+    void loadPatterns();
 
 public slots:
     /**
@@ -104,6 +125,7 @@ public slots:
 
     void setSteeringEnabled(){steeringEnabled = true;}
     void setSteeringDisabled(){steeringEnabled = false;}
+    void setColorSpace(bool value){colorSpaceBGR = value;}
 
 protected:
     void closeEvent(QCloseEvent *event);
