@@ -24,6 +24,9 @@ namespace Ui {
 class MainWindow;
 }
 
+/**
+ * @brief Klasa glownego okna programu. Tutaj jest wywolywana cala logika przetwarzania obrazu.
+ */
 class MainWindow : public QMainWindow
 {
     Q_OBJECT
@@ -35,10 +38,10 @@ public:
 private:
     Ui::MainWindow *ui;
     ConfigWindow *cfgWindow;
+    QLabel *patternPreview; //okno do wyswietlania zapisanego gestu
 
-    VideoCapture *videoCapture;
-    CascadeClassifier *faceCC;
-    QLabel *patternPreview;
+    VideoCapture *videoCapture; //obiekt przechwytujacy wideo
+    CascadeClassifier *faceCC; //obiekt poszukujacy twarzy za pomoca kaskad Haar'a
 
     //zmienne przechowujace zapisane gesty
     Mat patternDOWN;
@@ -56,7 +59,7 @@ private:
     Rect mouthInFaceRect;
     //------------------------------------
 
-    //wartosci HSV dla ust dobrane empirycznie
+    //wartosci HSV dla ust, dobrane empirycznie
     int hueMin;
     int hueMax;
     int satMin; //zalezne od oswietlenia sceny
@@ -69,13 +72,28 @@ private:
                         //zeby zostal uznany za poprawnie sklasyfikowany
     int dblClickDelay; //ilosc sek. jaka trzeba utrzymywac gest klikniecia aby
                         //zostal uznany za podwojne klikniecie
-    int steeringEnabled;
+    int steeringEnabled; //wlaczone sterowanie myszka
 
-
+    /**
+     * @brief Konwertuje typ cv::Mat do typu QImage
+     * @param mat obraz o jednym lub trzech kanalach
+     * @return przekonertowany obraz QImage
+     */
     QImage convertMatToQImage(const Mat& mat);
+
+    /**
+     * @brief Wyswietla powiekszony obraz zapisanego gestu.
+     * @param img Obraz gestu.
+     * @param windowTitle Tytul okna.
+     */
     void showPatternPreview(Mat img, QString windowTitle);
 
 public slots:
+    /**
+     * @brief Pobiera obraz z kamery i wykonuje na nim wszystkie potrzebne
+     *        operacje, a nastepnie wywoluje akcje zwiazana z aktualnym stanem
+     *        ust. Jest wywolywana asynchronicznie co FRAME_INTERVAL ms;
+     */
     void updateImages();
 
     void setHueMin(int value);

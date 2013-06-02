@@ -4,6 +4,11 @@
 #include "opencv2\core\core.hpp"
 #include "opencv2\opencv.hpp"
 
+/**
+ * @file mouthStateDet.h
+ * @brief Zawiera funkcje przetwarzajace obraz i analizujace stan ust.
+ */
+
 enum MouthState{
 
     MOUTH_UP,

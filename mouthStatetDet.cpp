@@ -320,7 +320,7 @@ MouthState detectMouthState(Mat mouth, Mat patternUp, Mat patternDown,
     //jesli jakikolwiek wzorzec rozni sie mniej niz limit to zwracamy odpowiedni stan
     if(minimal < limit)
         mouthState = ((minimal == sadDown) ? MOUTH_DOWN : ((minimal == sadUp) ? MOUTH_UP : ((minimal == sadLeft) ? MOUTH_LEFT : ((minimal == sadRight) ? MOUTH_RIGHT :  ((minimal == sadClick) ? MOUTH_CLICK : ((minimal == sadNeutral) ? MOUTH_NEUTRAL : MOUTH_UNDEFINED))))));
-    else{//jesli nie to stan jest niezdefiniowany
+    else{//jesli nie to stan jest niezidentyfikowany
        mouthState = MOUTH_UNDEFINED;
     }
 

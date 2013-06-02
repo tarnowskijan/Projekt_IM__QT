@@ -6,7 +6,7 @@ MainWindow::MainWindow(QWidget *parent) :
     ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
-    this->setWindowTitle("Projekt_IM");
+    this->setWindowTitle("Projekt_IM: Mouth");
     ui->startButton->setEnabled(false);
     ui->stopButton->setEnabled(false);
 
@@ -75,24 +75,20 @@ MainWindow::MainWindow(QWidget *parent) :
     //-----------------------------------------------------
 }
 
-
-/**
- * @brief Pobiera obraz z kamery i wykonuje na nim wszystkie potrzebne
- *        operacje, a nastepnie wywoluje akcje zwiazana z aktualnym stanem
- *        ust. Jest wywolywana asynchronicznie co FRAME_INTERVAL ms;
- */
 void MainWindow::updateImages(){
 
     *videoCapture >> frame;
 
     if(!frame.empty()){
 
+        //wlaczenie przyciskow kiedy wszystkie gesty sa uzupelnione
         if(!patternCLICK.empty() && !patternDOWN.empty()
                 && !patternLEFT.empty() && !patternNEUTRAL.empty()
                 && !patternRIGHT.empty() && !patternUP.empty()){
             ui->startButton->setEnabled(true);
             ui->stopButton->setEnabled(true);
         }
+        //---------------------------------------------------------
 
         //wyostrzanie
         Mat tmp;
@@ -104,7 +100,7 @@ void MainWindow::updateImages(){
 
         if(facesCount > 0){
 
-            calcMouthArea(&mouthRect,faceRect);
+            calcMouthArea(&mouthRect,faceRect); //wyznaczenie obszary ust
 
             Mat mouth;
             mouth = frame(mouthRect).clone(); //wyciecie kawalka z ustami
@@ -117,8 +113,8 @@ void MainWindow::updateImages(){
             inRange(mouthHSV,Scalar(hueMin,satMin,valMin),Scalar(hueMax,satMax,valMax),hueInRange);
 
             //zalewanie otworow
-            Mat kernel = getStructuringElement(MORPH_ELLIPSE,Size( 3,3 ));
-            morphologyEx(hueInRange,hueInRange,MORPH_CLOSE,kernel);
+            //Mat kernel = getStructuringElement(MORPH_ELLIPSE,Size( 15,15 ));
+            //morphologyEx(hueInRange,hueInRange,MORPH_CLOSE,kernel); //czemu to nie daje efektu??
 
             //wyciecie malych obiektow ktore nie naleza do ust
             removeSmallObjects(&hueInRange,minObjectSize);
@@ -137,7 +133,7 @@ void MainWindow::updateImages(){
                 MouthState mouthState = detectMouthState(finalMouth,patternUP,
                                                         patternDOWN, patternRIGHT,
                                                         patternLEFT,patternCLICK,
-                                                        patternCLICK,maxPercDiff);
+                                                        patternNEUTRAL,maxPercDiff);
                 QPoint cursorPos = QCursor::pos();
                 if(mouthState == MOUTH_LEFT){cursorPos.setX( cursorPos.x() - MOUSE_MOVE );}
                 else if(mouthState == MOUTH_RIGHT){cursorPos.setX( cursorPos.x() + MOUSE_MOVE );}
@@ -158,21 +154,19 @@ void MainWindow::updateImages(){
 
         }
 
+        //narysowanie ramki z kamery z zaznaczonym obszarem twarzy i ust
         drawRect(frame, faceRect, BLUE);
         drawRect(frame, mouthRect, RED);
         QImage faceImage = convertMatToQImage(frame);
 
         ui->allFrameView->setPixmap(QPixmap::fromImage(faceImage));
+        //--------------------------------------------------------------
     }
     //zakolejkowanie ponownego wywołania
     QTimer::singleShot(FRAME_INTERVAL, this,SLOT(updateImages()));
 }
 
-/**
- * @brief Konwertuje typ cv::Mat do typu QImage
- * @param mat obraz o jednym lub trzech kanalach
- * @return przekonertowany obraz QImage
- */
+
 QImage MainWindow::convertMatToQImage(const Mat& mat)
 {
     // 8-bits unsigned, NO. OF CHANNELS=1
