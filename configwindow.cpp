@@ -12,11 +12,12 @@ ConfigWindow::ConfigWindow(QWidget *parent) :
     ui->dblClickDelay->setTickPosition(QSlider::TicksBelow);
     ui->maxDiffPerc->setTickPosition(QSlider::TicksBelow);
     ui->minObjSize->setTickPosition(QSlider::TicksBelow);
+    ui->mouseSpeed->setTickPosition(QSlider::TicksBelow);
 
     ui->dblClickDelVal->setText(QString::number(ui->dblClickDelay->value()) +"s");
     ui->maxPercDiffVal->setText(QString::number(ui->maxDiffPerc->value()) + "%");
     ui->minObjSizeVal->setText(QString::number(ui->minObjSize->value()));
-    ui->mouseSpeedVal->setText(QString::number(ui->mouseSpeed->value()));
+    ui->mouseSpeedVal->setText(QString::number(ui->mouseSpeed->value()) + "px");
     ui->dblClickLabel->setText("Opóźnienie\npodwójnego\nkliknięcia:");
     ui->minObjLabel->setText("Minimalny\nrozmiar\nobiektu:");
     ui->maxPercDiffLabel->setText("Maksymalna\nprocentowa\nróżnica:");
@@ -27,6 +28,7 @@ ConfigWindow::ConfigWindow(QWidget *parent) :
     connect(ui->dblClickDelay,SIGNAL(valueChanged(int)),this,SLOT(emitDblClickDelayChanged(int)));
     connect(ui->sharpenCheckbox,SIGNAL(clicked(bool)),this,SLOT(emitSharpenCheckboxClicked(bool)));
     connect(ui->mouseSpeed,SIGNAL(valueChanged(int)),this,SLOT(emitMouseSpeedValueChanged(int)));
+    connect(ui->colorSpaceCheckbox,SIGNAL(clicked(bool)),this,SLOT(emitColorSpaceChanged(bool)));
 
     connect(ui->patternUpButton,SIGNAL(clicked()),this,SLOT(emitUpPatternSaved()));
     connect(ui->patternDownButton,SIGNAL(clicked()),this,SLOT(emitDownPatternSaved()));
@@ -55,7 +57,7 @@ void ConfigWindow::emitSharpenCheckboxClicked(bool checked){
 
 void ConfigWindow::emitMouseSpeedValueChanged(int value){
     emit mouseSpeedValueChanged(value);
-    ui->mouseSpeedVal->setText(QString::number(value));
+    ui->mouseSpeedVal->setText(QString::number(value) +"px");
 }
 
 ConfigWindow::~ConfigWindow()

@@ -33,6 +33,7 @@ signals:
     void neutralPatternSaved();
     void sharpenCheckboxClicked(bool checked);
     void mouseSpeedValueChanged(int val);
+    void colorSpaceChanged(bool checked);
 
 public slots:
 
@@ -41,6 +42,7 @@ public slots:
     void emitMaxPercDiffChanged(int val);
     void emitDblClickDelayChanged(int val);
     void emitMouseSpeedValueChanged(int value);
+    void emitColorSpaceChanged(bool checked){emit colorSpaceChanged(checked);}
 
     void emitUpPatternSaved(){emit upPatternSaved();}
     void emitDownPatternSaved(){emit downPatternSaved();}

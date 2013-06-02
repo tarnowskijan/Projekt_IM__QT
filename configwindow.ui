@@ -44,6 +44,16 @@
         </rect>
        </property>
        <layout class="QGridLayout" name="gridLayout">
+        <item row="3" column="0">
+         <widget class="QLabel" name="mouseSpeedLabel">
+          <property name="text">
+           <string>Predkosc</string>
+          </property>
+          <property name="alignment">
+           <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+          </property>
+         </widget>
+        </item>
         <item row="0" column="0">
          <widget class="QLabel" name="minObjLabel">
           <property name="text">
@@ -163,20 +173,20 @@
           </property>
          </widget>
         </item>
-        <item row="3" column="0">
-         <widget class="QLabel" name="mouseSpeedLabel">
-          <property name="text">
-           <string>Predkosc</string>
-          </property>
-          <property name="alignment">
-           <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-          </property>
-         </widget>
-        </item>
         <item row="3" column="2">
          <widget class="QLabel" name="mouseSpeedVal">
           <property name="text">
            <string>5</string>
+          </property>
+         </widget>
+        </item>
+        <item row="5" column="1">
+         <widget class="QCheckBox" name="colorSpaceCheckbox">
+          <property name="text">
+           <string>Kamera BGR/RGB</string>
+          </property>
+          <property name="checked">
+           <bool>true</bool>
           </property>
          </widget>
         </item>
