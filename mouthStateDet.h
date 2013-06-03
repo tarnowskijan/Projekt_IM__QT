@@ -16,7 +16,6 @@ enum MouthState{
     MOUTH_RIGHT,
     MOUTH_LEFT,
     MOUTH_CLICK,
-    MOUTH_DOUBLE_CLICK,
     MOUTH_UNDEFINED,
     MOUTH_NEUTRAL
 };
@@ -88,6 +87,16 @@ void removeSmallObjects(cv::Mat *binImage,int size);
  * @return TRUE - jesli nie bylo bledow, FALSE - w przeciwnym przypadku.
  */
 bool myAbsDiff(cv::Mat prevMat, cv::Mat currMat, cv::Mat *dest);
+
+/**
+ * @brief Umozliwia absdiff na obrazkach o roznych wymiarach. Wykonuje przeskalowanie
+ *          rozmiaru currMat do rozmiaru patternMat za pomoca metody najblizszego sasiada.
+ * @param patternMat Wzorzec gestu.
+ * @param currMat Aktualnie porównywany gest.
+ * @param dest Obraz w ktorym zapisywany jest wynik. Przyjmuje rozmiar patternMat.
+ * @return TRUE - jesli nie bylo bledow, FALSE - w przeciwnym przypadku.
+ */
+bool myAbsDiff2(cv::Mat patternMat, cv::Mat currMat, cv::Mat *dest);
 
 /**
  * @brief Wyznacza skrajne wspolrzedne na obrazie binarnym.
