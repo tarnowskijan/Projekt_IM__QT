@@ -122,12 +122,12 @@ void MainWindow::updateImages(){
             Mat mouth;
             mouth = frame(mouthRect).clone(); //wyciecie kawalka z ustami
 
-            //wyciecie malych obiektow ktore nie naleza do ust
+
             Mat processedMouth;
             //wykrycie ust na podanym kawalku twarzy
             detectMouth(mouth,&processedMouth);
 
-            //usuniecie szumow z obrazu i wypelnienie ust
+            //wyciecie malych obiektow ktore nie naleza do ust z obrazu i wypelnienie ust
             removeSmallObjects(&processedMouth,minObjectSize);
 
             finalMouth = processedMouth;
@@ -183,14 +183,14 @@ void MainWindow::updateImages(){
 
                 QCursor::setPos(cursorPos);
 
-                /*QString state = (mouthState==MOUTH_UNDEFINED) ? "MOUTH_UNDEFINED" : "";
+                QString state = (mouthState==MOUTH_UNDEFINED) ? "MOUTH_UNDEFINED" : "";
                 state = (mouthState==MOUTH_LEFT) ? "MOUTH_LEFT" : state;
                 state = (mouthState==MOUTH_RIGHT) ? "MOUTH_RIGHT" : state;
                 state = (mouthState==MOUTH_UP) ? "MOUTH_UP" : state;
                 state = (mouthState==MOUTH_DOWN) ? "MOUTH_DOWN" : state;
                 state = (mouthState==MOUTH_CLICK) ? "MOUTH_CLICK" : state;
                 state = (mouthState==MOUTH_NEUTRAL) ? "MOUTH_NEUTRAL" : state;
-                qDebug() << state;*/
+                qDebug() << state;
             }
             //-------------------------------
 
@@ -392,7 +392,7 @@ void MainWindow::loadPatterns(){
 void MainWindow::checkDblClick(){
     float ratio = (float)otherGestures / (float)allGestures;
 
-    if(ratio < 0.15){
+    if(ratio < 0.25){
         doubleLeftClick();
         //qDebug() << ">>DOUBLE CLICK<<";
     }

@@ -15,7 +15,7 @@ TEMPLATE = app
 SOURCES += main.cpp\
         mainwindow.cpp \
     configwindow.cpp \
-    mouthStatetDet.cpp
+    mouthStateDet.cpp
 
 HEADERS  += mainwindow.h \
         mouthStateDet.h \
