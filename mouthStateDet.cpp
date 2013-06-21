@@ -195,7 +195,7 @@ bool myAbsDiff2(Mat patternMat, Mat currMat, Mat *dest){
 
     Size patternSize = patternMat.size();
     Mat currMatResized;
-    resize(currMat,currMatResized,patternSize, 0, 0, INTER_NEAREST);
+    resize(currMat,currMatResized,patternSize, 0, 0, INTER_LINEAR);
 
     absdiff(patternMat,currMatResized,*dest);
 

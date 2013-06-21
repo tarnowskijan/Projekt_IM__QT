@@ -27,20 +27,20 @@ FORMS    += mainwindow.ui \
 RESOURCES +=
 
 INCLUDEPATH += \
-    C:\Users\joHn_ny\opencv\opencv\build\include
+   D:\opencv_bin\install\include
 
 LIBS += \
-    C:\Users\joHn_ny\opencv\opencv\own_build\lib\libopencv_core244.dll.a \
-    C:\Users\joHn_ny\opencv\opencv\own_build\lib\libopencv_highgui244.dll.a \
-    C:\Users\joHn_ny\opencv\opencv\own_build\lib\libopencv_imgproc244.dll.a \
-    C:\Users\joHn_ny\opencv\opencv\own_build\lib\libopencv_nonfree244.dll.a \
-    C:\Users\joHn_ny\opencv\opencv\own_build\lib\libopencv_video244.dll.a \
-    C:\Users\joHn_ny\opencv\opencv\own_build\lib\libopencv_videostab244.dll.a \
-    C:\Users\joHn_ny\opencv\opencv\own_build\lib\libopencv_features2d244.dll.a \
-    C:\Users\joHn_ny\opencv\opencv\own_build\lib\libopencv_contrib244.dll.a \
-    C:\Users\joHn_ny\opencv\opencv\own_build\lib\libopencv_gpu244.dll.a \
-    C:\Users\joHn_ny\opencv\opencv\own_build\lib\libopencv_legacy244.dll.a \
-    C:\Users\joHn_ny\opencv\opencv\own_build\lib\libopencv_ml244.dll.a \
-    C:\Users\joHn_ny\opencv\opencv\own_build\lib\libopencv_objdetect244.dll.a \
-    C:\Users\joHn_ny\opencv\opencv\own_build\lib\libopencv_photo244.dll.a \
-    C:\Users\joHn_ny\opencv\opencv\own_build\lib\libopencv_stitching244.dll.a
+    D:\opencv_bin\install\lib\libopencv_core244.dll.a \
+    D:\opencv_bin\install\lib\libopencv_highgui244.dll.a \
+    D:\opencv_bin\install\lib\libopencv_imgproc244.dll.a \
+    D:\opencv_bin\install\lib\libopencv_nonfree244.dll.a \
+    D:\opencv_bin\install\lib\libopencv_video244.dll.a \
+    D:\opencv_bin\install\lib\libopencv_videostab244.dll.a \
+    D:\opencv_bin\install\lib\libopencv_features2d244.dll.a \
+    D:\opencv_bin\install\lib\libopencv_contrib244.dll.a \
+    D:\opencv_bin\install\lib\libopencv_gpu244.dll.a \
+    D:\opencv_bin\install\lib\libopencv_legacy244.dll.a \
+    D:\opencv_bin\install\lib\libopencv_ml244.dll.a \
+    D:\opencv_bin\install\lib\libopencv_objdetect244.dll.a \
+    D:\opencv_bin\install\lib\libopencv_photo244.dll.a \
+    D:\opencv_bin\install\lib\libopencv_stitching244.dll.a

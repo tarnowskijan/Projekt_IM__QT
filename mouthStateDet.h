@@ -9,6 +9,9 @@
  * @brief Zawiera funkcje przetwarzajace obraz i analizujace stan ust.
  */
 
+/**
+ * @brief Enum okreslajacy stan ust.
+ */
 enum MouthState{
 
     MOUTH_UP,
@@ -20,6 +23,9 @@ enum MouthState{
     MOUTH_NEUTRAL
 };
 
+/**
+ * @brief Enum okreslajacy kolor prostokata. Wykorzystywany w drawRect().
+ */
 enum RectColor{
     RED,
     GREEN,
@@ -34,7 +40,7 @@ enum RectColor{
  * @param patternRight Binarny wzor gestu "w prawo".
  * @param patternLeft Binarny wzor gestu "w lewo".
  * @param patternClick Binarny wzor gestu "klikniecie".
- * @param patternNautral Binarny wzor gestu "neutralny".
+ * @param patternNeutral Binarny wzor gestu "neutralny".
  * @param limit Procentowy limit uznania gestu za poprawny.
  * @return Stan ust.
  */

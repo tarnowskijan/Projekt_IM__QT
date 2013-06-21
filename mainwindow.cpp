@@ -19,6 +19,9 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(ui->savePatternsButton,SIGNAL(clicked()),this,SLOT(savePatterns()));
     connect(ui->loadPatternsButton,SIGNAL(clicked()),this,SLOT(loadPatterns()));
 
+    ui->algStateText->setText("Niezainicjowany");
+    ui->detectedGestText->setText("");
+
     //podpiecie okna konfiguracji
     cfgWindow = new ConfigWindow(0);
     connect(ui->confWindowButton,SIGNAL(pressed()),cfgWindow,SLOT(show()));
@@ -98,6 +101,7 @@ void MainWindow::updateImages(){
                 && !ui->stopButton->isEnabled()){
             ui->startButton->setEnabled(true);
             ui->stopButton->setEnabled(true);
+            ui->algStateText->setText("Wyłączony");
         }
         //---------------------------------------------------------
         //jesli przestrzen kamery to RGB a nie BGR to trzeba przekonwertowac
@@ -140,11 +144,17 @@ void MainWindow::updateImages(){
             //odczytanie stanu ust i wykonanie akcji
             //nacisniecie CTRL odblokowuje kursor
             if(steeringEnabled &&
-                    QApplication::queryKeyboardModifiers() != Qt::ControlModifier){
+                    QApplication::queryKeyboardModifiers() != Qt::ControlModifier){                
+
                 MouthState mouthState = detectMouthState(finalMouth,patternUP,
                                                         patternDOWN, patternRIGHT,
                                                         patternLEFT,patternCLICK,
                                                         patternNEUTRAL,maxPercDiff);
+
+                if(ui->algStateText->text()!="Włączony"){
+                    ui->algStateText->setText("Włączony");
+                }
+
                 QPoint cursorPos = QCursor::pos();
 
                 if(dblClick){allGestures++;}
@@ -152,18 +162,22 @@ void MainWindow::updateImages(){
                 if(mouthState == MOUTH_LEFT){
                     cursorPos.setX( cursorPos.x() - mouseSpeed );
                     if(dblClick){otherGestures++;}
+                    ui->detectedGestText->setText("W lewo");
                 }
                 else if(mouthState == MOUTH_RIGHT){
                     cursorPos.setX( cursorPos.x() + mouseSpeed );
                     if(dblClick){otherGestures++;}
+                    ui->detectedGestText->setText("W prawo");
                 }
                 else if(mouthState == MOUTH_UP){
                     cursorPos.setY( cursorPos.y() - mouseSpeed );
                     if(dblClick){otherGestures++;}
+                    ui->detectedGestText->setText("W górę");
                 }
                 else if(mouthState == MOUTH_DOWN){
                     cursorPos.setY( cursorPos.y() + mouseSpeed );
                     if(dblClick){otherGestures++;}
+                    ui->detectedGestText->setText("W dół");
                 }
                 else if(mouthState == MOUTH_CLICK){
 
@@ -175,22 +189,30 @@ void MainWindow::updateImages(){
                     else{
                         allGestures++;
                     }
-
+                    ui->detectedGestText->setText("Kliknięcie");
+                }else if(mouthState == MOUTH_NEUTRAL){
+                    if(dblClick){otherGestures++;}
+                    ui->detectedGestText->setText("Neutralny");
                 }
                 else{
                     if(dblClick){otherGestures++;}
+                    ui->detectedGestText->setText("Niezdefiniowany");
                 }
 
                 QCursor::setPos(cursorPos);
 
-                QString state = (mouthState==MOUTH_UNDEFINED) ? "MOUTH_UNDEFINED" : "";
+                /*QString state = (mouthState==MOUTH_UNDEFINED) ? "MOUTH_UNDEFINED" : "";
                 state = (mouthState==MOUTH_LEFT) ? "MOUTH_LEFT" : state;
                 state = (mouthState==MOUTH_RIGHT) ? "MOUTH_RIGHT" : state;
                 state = (mouthState==MOUTH_UP) ? "MOUTH_UP" : state;
                 state = (mouthState==MOUTH_DOWN) ? "MOUTH_DOWN" : state;
                 state = (mouthState==MOUTH_CLICK) ? "MOUTH_CLICK" : state;
                 state = (mouthState==MOUTH_NEUTRAL) ? "MOUTH_NEUTRAL" : state;
-                qDebug() << state;
+                qDebug() << state;*/
+            }else if(steeringEnabled){
+                ui->algStateText->setText("Wstrzymany");
+            }else{
+                ui->algStateText->setText("Wyłączony");
             }
             //-------------------------------
 
@@ -394,6 +416,7 @@ void MainWindow::checkDblClick(){
 
     if(ratio < 0.25){
         doubleLeftClick();
+        ui->detectedGestText->setText("Podwójne kliknięcie");
         //qDebug() << ">>DOUBLE CLICK<<";
     }
 
